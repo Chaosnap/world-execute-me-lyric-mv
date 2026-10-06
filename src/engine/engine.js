@@ -25,11 +25,11 @@ const LEAD = { latin: ['mono'], cjk: ['tcSans'] };
  * which = { latin: [mono | serif | sans ...], cjk: [role ...] }, or null for all of them.
  */
 async function loadFonts(cfg, which = null) {
-  const jobs = [];
+  const jobs = [], base = cfg.paths.fonts ?? 'node_modules/@fontsource';     // relative to the page (the site build has its own copy)
   for (const key of which?.latin ?? ['mono', 'serif', 'sans']) {
     const { family, pkg, weights, italic = [] } = cfg.fonts[key];
     const add = (w, style) => {
-      const face = new FontFace(family, `url("/node_modules/@fontsource/${pkg}/files/${pkg}-latin-${w}-${style}.woff2")`, { weight: String(w), style });
+      const face = new FontFace(family, `url("${base}/${pkg}/files/${pkg}-latin-${w}-${style}.woff2")`, { weight: String(w), style });
       jobs.push(face.load().then((f) => { document.fonts.add(f); }));
     };
     weights.forEach((w) => add(w, 'normal'));
@@ -41,7 +41,7 @@ async function loadFonts(cfg, which = null) {
   for (const c of (cfg.fonts.cjk || []).filter((c) => !which || which.cjk.includes(c.role))) {
     await new Promise((res, rej) => {
       const link = document.createElement('link');
-      link.rel = 'stylesheet'; link.href = `/node_modules/@fontsource/${c.pkg}/${c.weight}.css`;
+      link.rel = 'stylesheet'; link.href = `${base}/${c.pkg}/${c.weight}.css`;
       link.onload = res; link.onerror = () => rej(new Error('font css failed: ' + c.pkg));
       document.head.appendChild(link);
     });
@@ -52,7 +52,7 @@ async function loadFonts(cfg, which = null) {
   }
 }
 
-const getJson = async (p) => { try { return await (await fetch('/' + p.split('/').map(encodeURIComponent).join('/'))).json(); } catch { return null; } };
+const getJson = async (p) => { try { return await (await fetch(p.split('/').map(encodeURIComponent).join('/'))).json(); } catch { return null; } };
 
 /**
  * Resolves as soon as the warning page before the song can be drawn (its two fonts are in): that page is the

@@ -7,7 +7,8 @@ import { createEngine } from './engine/engine.js';
 
 const qs = new URLSearchParams(location.search);
 const $ = (id) => document.getElementById(id);
-const urlOf = (p) => '/' + p.split('/').map(encodeURIComponent).join('/');
+// relative to the page, so it works from any folder of a site (GitHub Pages serves it under /<repository>/)
+const urlOf = (p) => p.split('/').map(encodeURIComponent).join('/');
 const getJson = async (p) => {
   const r = await fetch(urlOf(p));
   if (!r.ok) throw new Error(`${p}: HTTP ${r.status}`);

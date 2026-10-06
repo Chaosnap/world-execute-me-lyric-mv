@@ -165,6 +165,8 @@ The project was made and tested on Windows 11 only.
    (`npm run dev` works too: it starts the server without opening a browser.)
 4. The browser opens http://localhost:5173/ : the film fills the window and plays on a loop; the first click or key goes full screen. Whether the song plays along is set by `config.json → player.sound`.
 5. Export a video: `npm run export:preview` (1080p60) or `npm run export:4k` (4K60); the files go to `out/`.
+6. Publish on GitHub Pages: `npm run deploy` builds the site (`dist/`, also `npm run build` alone) and pushes it to the `gh-pages` branch;
+   then, once, Settings → Pages → Deploy from a branch → `gh-pages`, `/ (root)`. The site carries the song and the lyrics: publishing it makes them public.
 
 `ffmpeg` comes from `ffmpeg-static` (if `node_modules/ffmpeg-static/ffmpeg.exe` is missing, run `node node_modules/ffmpeg-static/install.js` once).
 Python is needed only to re-analyse the audio and to check an exported file.
@@ -218,6 +220,17 @@ npm run dev        # 或 npm run preview:同時自動打開瀏覽器
 `config.json → player.sound` 為 `true` 時與歌曲同步播放(瀏覽器不讓自動出聲時,第一次點擊後開始出聲;聲音放不出來時畫面以無聲繼續);
 為 `false` 時不載入音檔,畫面以自己的時鐘無聲播放。
 `?lab=plates`(或 `inks`、`glyph`、`walls`、`verse2`、`pre2`、`history`、`love`、`closeups`)改看「檢查卡」:單獨的一張圖,不帶歌詞。
+
+## 部署到 GitHub Pages
+
+```bash
+npm run build      # 只建站:dist/(頁面、程式、資料、你的歌詞、剪影、只含用到字形的字體、壓成 AAC 的歌)
+npm run deploy     # 建站並把 dist/ 推到 gh-pages 分支
+```
+第一次部署後,在 GitHub 的 Settings → Pages → Build and deployment 選 **Deploy from a branch**,分支 `gh-pages`、`/ (root)`;
+網址是 `https://<帳號>.github.io/<倉庫名>/`。頁面裡的路徑都是相對的,放在任何子目錄都能用。
+建站在本機進行,不用 GitHub Actions:歌曲與歌詞不在倉庫裡(main 分支也不放),但 **gh-pages 分支與網站上會有它們,等於公開**。
+網頁上瀏覽器不允許自動出聲,訪客點一下畫面後才有聲音(`npm run dev` 開的獨立視窗不受此限)。
 
 ## 其他命令
 
